@@ -1,0 +1,74 @@
+image:
+  repository: setme
+  tag:  setme
+
+extraLabels:
+  group: wardrobe
+
+replicas: 2
+
+server:
+  servlet:
+    contextPath: /
+
+service:
+  port: 80
+  targetPort: 8080
+
+jdbc:
+  url: jdbc:postgresql://postgresdb:5432/dresses
+
+flyway:
+  table: flyway_schema_history
+
+ingress:
+  http:
+    enabled: false
+
+spring:
+  application:
+    name: spring-cloud-stream-kafka-app
+
+opts:
+  java: -Xmx512m -Dsun.net.inetaddr.ttl=0
+  app: --spring.config.location=/config/application.yaml
+
+logback:
+  env: dev
+
+resources:
+  limits:
+    memory: 600Mi
+    cpu: 600m
+  requests:
+    memory: 300Mi
+    cpu: 200m
+
+livenessProbe:
+  initialDelaySeconds: 300
+  periodSeconds: 10
+  successThreshold: 1
+  failureThreshold: 3
+  httpGet:
+    path: "/actuator/health"
+    port: http
+    scheme: HTTP
+
+readinessProbe:
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  successThreshold: 1
+  failureThreshold: 20
+  httpGet:
+    path: "/actuator/ready"
+    port: http
+    scheme: HTTP
+
+
+secrets:
+  - env_name: JDBC_USERNAME
+    name: dresses-secret
+    key: jdbc-username
+  - env_name: JDBC_PASSWORD
+    name: dresses-secret
+    key: jdbc-password

@@ -1,0 +1,103 @@
+server:
+  port: 9000
+  use-forward-headers: true
+  tomcat:
+    protocol-header: x-forwarded-proto
+    remote_ip_header: x-forwarded-for
+  servlet:
+    context-path: ${SERVLET_CONTEXT_PATH}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  server:
+    port: 8081
+    servlet:
+      context-path: /admin
+logging:
+  level:
+    cristina:
+      tech: debug
+    org:
+      hibernate:
+        engine:
+          jdbc:
+            env:
+              internal:
+                LobCreatorBuilderImpl: error
+spring:
+  application:
+    name: ${APP_NAME}
+  main:
+    allow-bean-definition-overriding: true
+  jackson:
+    default-property-inclusion: non_null
+  data:
+    rest:
+      detection-strategy: annotated
+  datasource:
+    password: ${JDBC_PASSWORD}
+    type: com.zaxxer.hikari.HikariDataSource
+    url: ${JDBC_URL}
+    username: ${JDBC_USERNAME:postgres}
+    hikari:
+      minimum-idle: 2
+      schema: public
+      maximumPoolSize: 40
+      connectionTimeout: 3500
+  flyway:
+    baseline-on-migrate: true
+    enabled: true
+    schemas:
+      - public
+    table: ${FLYWAY_TABLE}
+    validate-on-migrate: true
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+        default_schema: public
+        jdbc:
+          time_zone: UTC
+          lob:
+            non_contextual_creation: true
+  cloud:
+#    aws:
+#      credentials:
+#        accessKey: ${AWS_ACCESS_KEY_ID}
+#        secretKey: ${AWS_SECRET_ACCESS_KEY}
+#        instanceProfile: false
+#        region:
+#          auto: true
+#        stack:
+#          auto: false
+    gcp:
+      sql:
+        enabled: false
+#        database-name: ${DB_NAME}
+#        instance-connection-name: ${DB_INSTANCE}
+    stream:
+      kafka:
+        binder:
+          brokers: kafka
+      bindings:
+        idresses:
+          destination: dresses
+          group: dresses-group
+          contentType: application/json
+          consumer:
+            durableSubscription: true
+            concurrency: 20
+        iratings:
+          destination: ratings
+          group: ratings-group
+          contentType: application/json
+          consumer:
+            durableSubscription: true
+            concurrency: 20

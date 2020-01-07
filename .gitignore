@@ -1,0 +1,7 @@
+# OS X
+.history
+.DS_Store
+
+# IntelliJ
+.idea/
+*.iml

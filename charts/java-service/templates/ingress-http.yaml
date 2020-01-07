@@ -1,0 +1,23 @@
+{{- if .Values.ingress.http.enabled}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{.Release.Name}}
+  labels:
+    app: {{.Release.Name}}
+{{- with .Values.ingress.http.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  rules:
+    - host: {{ .Values.ingress.http.host }}
+      http:
+        paths:
+      {{- range $path := .Values.ingress.http.paths }}
+          - path: {{ $path }}
+            backend:
+              serviceName: {{ $.Release.Name }}
+              servicePort: http
+      {{- end }}
+{{- end }}
